@@ -132,8 +132,6 @@ sub writeChunk2 {
         $acktimeout = 0.01;
     }
 
-    $acktimeout = 10.0;
-
     while ( $response = readPacket( $fd, $acktimeout ) ) {
         my @responseBytes = unpack( 'C*', $response );
         if ( scalar @responseBytes != 5 || $responseBytes[0] != 8 ) {
@@ -149,14 +147,8 @@ sub writeChunk2 {
         );
 
         delete $sentPacketsRef->{$ackpacket};
-
-        $outstanding = scalar keys %{$sentPacketsRef};
-
         print "Response: ACK 0x", $ackpacket, " (outstanding: ",
-          $outstanding, ")\n";
-        if ( $outstanding == 0 ) {
-            $acktimeout = 0.0001;
-        }
+          scalar keys %{$sentPacketsRef}, ")\n";
     }
     return 1;
 }
